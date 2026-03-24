@@ -1,0 +1,91 @@
+repository_type: pipeline
+
+nf_core_version: 3.5.2
+
+lint:
+  files_unchanged:
+    - .prettierignore
+    - .prettierignore
+    - .github/CONTRIBUTING.md
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-picnac_logo_light.png
+    - docs/images/nf-core-picnac_logo_light.png
+    - docs/images/nf-core-picnac_logo_dark.png
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/CONTRIBUTING.md
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - assets/email_template.txt
+    - docs/README.md
+    - .github/CONTRIBUTING.md
+    - assets/sendmail_template.txt
+    - .prettierignore
+    - .github/CONTRIBUTING.md
+  nextflow_config: false
+  nf_test_content: false
+  multiqc_config: false
+  files_exist:
+    - .github/workflows/nf-test.yml
+    - .github/actions/get-shards/action.yml
+    - .github/actions/nf-test/action.yml
+    - nf-test.config
+    - tests/default.nf.test
+    - conf/igenomes.config
+    - .github/workflows/branch.yml
+    - .github/workflows/nf-test.yml
+    - .github/actions/get-shards/action.yml
+    - .github/actions/nf-test/action.yml
+    - .github/workflows/linting_comment.yml
+    - .github/workflows/linting.yml
+    - nextflow_schema.json
+    - conf/test.config
+    - conf/test_full.config
+    - .github/workflows/nf-test.yml
+    - .github/actions/get-shards/action.yml
+    - .github/actions/nf-test/action.yml
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-picnac_logo_light.png
+    - docs/images/nf-core-picnac_logo_light.png
+    - docs/images/nf-core-picnac_logo_dark.png
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/workflows/awstest.yml
+    - .github/workflows/awsfulltest.yml
+    - assets/multiqc_config.yml
+    - assets/email_template.html
+    - assets/sendmail_template.txt
+    - assets/email_template.txt
+    - CITATIONS.md
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
+  schema_lint: false
+  schema_params: false
+  schema_description: false
+  included_configs: false
+
+template:
+  org: Atharva-Tikhe
+  name: PICNAC
+  description: A platform-independent analysis pipeline for calling CNAs from microarray
+    data for Acute Lymphoblastic Leukaemia
+  author: Atharva Tikhe
+  version: 1.0.0dev
+  force: true
+  outdir: .
+  skip_features:
+    - ci
+    - test_config
+    - nf-test
+    - igenomes
+    - multiqc
+    - fastqc
+    - nf_schema
+    - nf_core_configs
+    - seqera_platform
+    - gpu
+    - codespaces
+    - vscode
+    - citations
+    - rocrate
+    - email
+    - slackreport
+  is_nfcore: false
