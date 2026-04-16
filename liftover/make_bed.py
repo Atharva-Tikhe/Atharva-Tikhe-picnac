@@ -25,59 +25,93 @@ logging.basicConfig(
     filemode="a",
 )
 
-df = pd.read_csv(args["i"], sep="\t")
-before_control = len(df)
-df = df[(df.iloc[:, 2] != 0) & (df.iloc[:, 3] != 0)]
-after_control = len(df)
-if before_control - after_control != 0:
-    logging.warning(f"removed {before_control-after_control} unplaced/control probes.")
 
-df_bed = pd.DataFrame(
-    {
-        "chrom": df.iloc[:, 2].astype(str),
-        "start": df.iloc[:, 3].astype(int) - 1,
-        "end": df.iloc[:, 3].astype(int),
-        "name": df.iloc[:, 0],
-        "score": 0,
-        "strand": ".",
-        "genotypes": df.iloc[:, 4].astype(int),
-        "snps": df.iloc[:, 1].astype(str),
-        "LRR": df.iloc[:, 5],
-        "BAF": df.iloc[:, 6],
-    }
-)
+class BEDWriter:
+    def __init__(self, input_file):
+        self.input_file = Path(input_file)
+        self.df = pd.read_csv(input_file, sep="\t")
+        self.remove_unplaced()
+        self.make_bed()
+        self.split_and_write()
 
-if len(df_bed[df_bed["chrom"] == "XY"]) != 0:
-    logging.info("removed pseudoautosomal regions (XY)")
-    df_bed = df_bed[df_bed["chrom"] != "XY"]
-    df = df[df["chrom"] != "XY"]
+    def remove_unplaced(self):
+        before_control = len(self.df)
+        self.df = self.df[(self.df.iloc[:, 2] != 0) & (self.df.iloc[:, 3] != 0)]
+        after_control = len(self.df)
+        if before_control - after_control != 0:
+            logging.warning(
+                f"removed {before_control-after_control} unplaced/control probes."
+            )
 
-    if len(df) == len(df_bed):
-        logging.info("rearranged columns for BED")
-        logging.info("added start column")
-    else:
-        logging.error("dataframe shapes do not match after dropping XY!")
-        exit(1)
+    def make_bed(self):
+        self.df_bed = pd.DataFrame(
+            {
+                "chrom": self.df.iloc[:, 2].astype(str),
+                "start": self.df.iloc[:, 3].astype(int) - 1,
+                "end": self.df.iloc[:, 3].astype(int),
+                "name": self.df.iloc[:, 0],
+                "score": 0,
+                "strand": ".",
+                "genotypes": self.df.iloc[:, 4].astype(int),
+                "snps": self.df.iloc[:, 1].astype(str),
+                "LRR": self.df.iloc[:, 5],
+                "BAF": self.df.iloc[:, 6],
+            }
+        )
 
-df_bed["chrom"] = df_bed["chrom"].apply(
-    lambda x: x if x.startswith("chr") else f"chr{x}"
-)
+        if len(self.df_bed[self.df_bed["chrom"] == "XY"]) != 0:
+            logging.info("removed pseudoautosomal regions (XY)")
+            self.df_bed = self.df_bed[self.df_bed["chrom"] != "XY"]
+            self.df = self.df[self.df["chrom"] != "XY"]
 
-chrom_order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY", "chrM"]
+            if len(self.df) == len(self.df_bed):
+                logging.info("rearranged columns for BED")
+                logging.info("added start column")
+        else:
+            logging.error("dataframe shapes do not match after dropping XY!")
+            exit(1)
 
-df_bed["chrom"] = pd.Categorical(df_bed["chrom"], categories=chrom_order, ordered=True)
+        self.df_bed["chrom"] = self.df_bed["chrom"].apply(
+            lambda x: x if x.startswith("chr") else f"chr{x}"
+        )
 
-df_bed = df_bed.sort_values(["chrom", "start"])
+        chrom_order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY", "chrM"]
 
-try:
-    out = Path(args["i"]).stem + ".bed"
-    logging.info(f"writing to {out}")
-    # removed headers cuz liftOver complains
-    df_bed.to_csv(out, sep="\t", index=False, header=False)
+        self.df_bed["chrom"] = pd.Categorical(
+            self.df_bed["chrom"], categories=chrom_order, ordered=True
+        )
 
-except Exception as e:
-    logging.error("could not write output file")
-    raise (e)
-finally:
-    logging.info("writing complete")
-    logging.info("--------- Goodbye ------")
+        self.df_bed = self.df_bed.sort_values(["chrom", "start"])
+
+    def split_and_write(self):
+        self.to_lift = self.df_bed.iloc[:, range(6)]
+        self.data = self.df_bed.iloc[:, [3, 6, 7, 8, 9]]
+
+        to_lift_out = self.input_file.stem + ".to_lift.bed"
+        data_out = self.input_file.stem + ".data.bed"
+
+        try:
+            logging.info(f"writing 'to_lift' bed to {to_lift_out}")
+            # removed headers cuz liftOver complains
+            self.to_lift.to_csv(to_lift_out, sep="\t", index=False, header=False)
+
+        except Exception as e:
+            logging.error("could not write output file: {to_lift_out}")
+            raise (e)
+        finally:
+            logging.info("writing complete")
+
+        try:
+            logging.info(f"writing 'data' bed to {data_out}")
+            # removed headers cuz liftOver complains
+            self.data.to_csv(data_out, sep="\t", index=False, header=False)
+
+        except Exception as e:
+            logging.error("could not write output file: {data_out}")
+            raise (e)
+        finally:
+            logging.info("writing complete")
+            logging.info("--------- Goodbye ------")
+
+
+obj = BEDWriter(args["i"])
