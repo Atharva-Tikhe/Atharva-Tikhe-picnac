@@ -1,0 +1,9 @@
+liftover:
+  - version: ''
+  - downloaded: ''
+chain_file:
+  - name: 'hg19ToHg38.over.chain.gz'
+  - downloaded: '2026-04-16'
+  - last_modified_at_source: '2013-12-31'
+
+  
