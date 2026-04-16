@@ -8,7 +8,9 @@ from datetime import datetime
 
 arg_parser = ArgumentParser(
     usage="make_bed.py: Use the TSV generated from gtc to make bed.",
-    description="This script converts a TSV to a canonical BED with added column for genomic ranges. Used in the pipeline to prepare inputs for liftOver",
+    description="""
+    This script converts a TSV to a canonical BED with added column for genomic ranges. Used in the pipeline to prepare inputs for liftOver
+    """,
 )
 
 arg_parser.add_argument("-i", help="Input TSV", required=True)
@@ -28,6 +30,7 @@ logging.basicConfig(
 
 class BEDWriter:
     def __init__(self, input_file):
+        logging.info("--------- BEGIN ------")
         self.input_file = Path(input_file)
         self.df = pd.read_csv(input_file, sep="\t")
         self.remove_unplaced()
@@ -84,34 +87,19 @@ class BEDWriter:
         self.df_bed = self.df_bed.sort_values(["chrom", "start"])
 
     def split_and_write(self):
-        self.to_lift = self.df_bed.iloc[:, range(6)]
-        self.data = self.df_bed.iloc[:, [3, 6, 7, 8, 9]]
-
-        to_lift_out = self.input_file.stem + ".to_lift.bed"
-        data_out = self.input_file.stem + ".data.bed"
+        out = self.input_file.stem + ".bed"
 
         try:
-            logging.info(f"writing 'to_lift' bed to {to_lift_out}")
+            logging.info(f"writing bed to {out}")
             # removed headers cuz liftOver complains
-            self.to_lift.to_csv(to_lift_out, sep="\t", index=False, header=False)
+            self.df_bed.to_csv(out, sep="\t", index=False, header=False)
 
         except Exception as e:
-            logging.error("could not write output file: {to_lift_out}")
+            logging.error("could not write output file: {out}")
             raise (e)
         finally:
             logging.info("writing complete")
-
-        try:
-            logging.info(f"writing 'data' bed to {data_out}")
-            # removed headers cuz liftOver complains
-            self.data.to_csv(data_out, sep="\t", index=False, header=False)
-
-        except Exception as e:
-            logging.error("could not write output file: {data_out}")
-            raise (e)
-        finally:
-            logging.info("writing complete")
-            logging.info("--------- Goodbye ------")
+            logging.info("--------- END ------")
 
 
 obj = BEDWriter(args["i"])

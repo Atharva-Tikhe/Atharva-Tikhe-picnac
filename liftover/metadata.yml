@@ -1,6 +1,5 @@
 liftover:
-  - version: ''
-  - downloaded: ''
+  - downloaded: '2026-04-16'
 chain_file:
   - name: 'hg19ToHg38.over.chain.gz'
   - downloaded: '2026-04-16'
