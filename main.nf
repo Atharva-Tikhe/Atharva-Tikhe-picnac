@@ -11,6 +11,9 @@
 
 include { IAAP  } from './modules/iaap'
 include { ILLUMINA_EXTRACT_DATA } from './modules/illumina_extract_data'
+include { MAKE_BED } from './modules/make_bed'
+include { LIFT_OVER } from './modules/lift_over'
+
 
 include { READ_SAMPLESHEET } from './subworkflows/read_samplesheet.nf'
 
@@ -25,8 +28,9 @@ workflow {
 
     ILLUMINA_EXTRACT_DATA(IAAP.output.gtc)
 
-    ILLUMINA_EXTRACT_DATA.output.illumina_tsv.view()
-  
+    MAKE_BED(ILLUMINA_EXTRACT_DATA.output.illumina_tsv)
+
+    LIFT_OVER(MAKE_BED.output.bed)
 
 }
 
