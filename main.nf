@@ -19,7 +19,7 @@ workflow {
   
   main:
   
-    manifest = READ_SAMPLESHEET('/home/atharva/dev/pipeline/Atharva-Tikhe-picnac/samplesheet.csv').sample_manifest
+    manifest = READ_SAMPLESHEET('/home/atharva/dev/pipeline/Atharva-Tikhe-picnac/samplesheet.csv').result
 
     IAAP(manifest)
 

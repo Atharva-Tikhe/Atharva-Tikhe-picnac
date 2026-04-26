@@ -7,3 +7,9 @@ testing/
 testing*
 *.pyc
 null/
+**/*.gz
+**/*.bed
+**/*.idat
+**/*.CEL
+**/*.tsv
+assets/*
