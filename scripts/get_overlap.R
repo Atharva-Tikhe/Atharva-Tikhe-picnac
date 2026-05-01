@@ -1,10 +1,21 @@
 library(GenomicRanges)
+library(optparse)
 
-calls <- read.table('./205030250061_32215.hg38.calls.tsv', header = TRUE)
-summary(calls)
+option_list <- list(
+                    make_option(c("-s", "--sample"), type = "character", help = "Sample ID"),
+                    make_option(c("-l", "--loci"), type = "character", help = "Loci file (BED)")
+)
+
+opt <- parse_args(OptionParser(option_list = option_list))
+loci_file = opt$loci
+sample_id = opt$sample
+
+
+calls <- read.table(paste0(sample_id, '.hg38.calls.tsv'), header = TRUE)
+
 segments_gr <- GRanges(seqnames = calls$chrom, ranges = IRanges(calls$loc.start, calls$loc.end), seg.mean = calls$seg.mean, call = calls$call)
 
-loci_gr <- rtracklayer::import("loci.hg38.bed", format = "BED")
+loci_gr <- rtracklayer::import(loci_file, format = "BED")
 
 hits <- findOverlaps(loci_gr, segments_gr)
 
@@ -13,5 +24,5 @@ result <- cbind(
   as.data.frame(segments_gr[subjectHits(hits)])
 )
 
-write.table(result, 'loci_segment_overlaps.tsv', sep ='\t', row.names = FALSE, quote = FALSE)
+write.table(result, paste0(sample_id, '_loci_segment_overlaps.tsv'), sep ='\t', row.names = FALSE, quote = FALSE)
 

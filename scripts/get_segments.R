@@ -4,21 +4,39 @@ if (!require("BiocManager", quietly = TRUE)) {
 }
 library(DNAcopy)
 library(dplyr)
+library(optparse)
+
+option_list <- list(
+                    make_option(c("-i", "--input"), type = "character", help = "Input BED file"),
+                    make_option(c("-s", "--sample"), type = "character", help = "Sample ID")
+)
+
+opt <- parse_args(OptionParser(option_list = option_list))
+input_file = opt$input
+sample_id = opt$sample
 
 del_thresh <- -0.6
 amp_thresh <- 0.4
-min_len_thresh <- 10
+min_len_thresh <- 50
 
 
-data <- read.csv('~/dev/pipeline/executions/test/lift/205030250061_32215.hg38.bed', sep='\t', header = FALSE)
+data <- read.csv(input_file, sep='\t', header = FALSE)
 
-CNA.object <- CNA(data$V9, data$V1, data$V3, data.type = 'logratio', sampleid="205030250061_32215")
+CNA.object <- CNA(data$V9, data$V1, data$V3, data.type = 'logratio', sampleid=sample_id)
 
 smoothed.CNA.object <- smooth.CNA(CNA.object)
 
 segment.smoothed.CNA.object <- segment(smoothed.CNA.object)
 
-write.table(segment.smoothed.CNA.object$output, '205030250061_32215_segments.tsv', sep='\t')
+write.table(segment.smoothed.CNA.object$output, paste0(sample_id, '_segments.tsv'), sep='\t')
+
+png(filename = paste0(sample_id, ".png"), width=3600, height=1500)
+plot(segment.smoothed.CNA.object, plot.type="s")
+dev.off()
+png(filename = paste0(sample_id, "_segmeans_over_chrs.png"), width=3600, height=1500)
+plot(segment.smoothed.CNA.object, plot.type="p")
+dev.off()
+
 
 seg_o <- data.frame(segment.smoothed.CNA.object$output)
 
@@ -38,5 +56,5 @@ calls <- seg_o %>% as_tibble() %>% filter(num.mark >= min_len_thresh) %>% mutate
 #     )
 #   )
 
-write.table(calls, "205030250061_32215.hg38.calls.tsv", sep='\t', row.names=FALSE)
+write.table(calls, paste0(sample_id, ".hg38.calls.tsv"), sep='\t', row.names=FALSE)
 

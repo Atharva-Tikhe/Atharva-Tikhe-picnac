@@ -1,5 +1,8 @@
 process LIFT_OVER {
 
+    
+  publishDir "${params.outdir}/${manifest.sample_id}/liftover", pattern: '*.bed'
+
     input:
        tuple val(manifest), path(geno_tsv)
 
