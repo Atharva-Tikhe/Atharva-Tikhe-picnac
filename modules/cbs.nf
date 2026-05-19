@@ -5,10 +5,10 @@ process CBS {
     conda "/home/atharva/miniforge3/envs/dnacopy/"
 
     input:
-    tuple val(manifest), path(bedfile)
+    tuple val(manifest), path(bedfile), path(WF)
 
     output:
-    tuple val(manifest), path("*.tsv"), emit: cbs
+    tuple val(manifest), path("*calls.tsv"), emit: cbs
     tuple val(manifest), path("*.png"), emit: cbs_images
 
 
@@ -16,16 +16,7 @@ process CBS {
     """
         which R > version.txt
 
-        Rscript ${params.scripts.gc_corr} -i ${bedfile} -s ${manifest.sample_id}
-
-        Rscript ${params.scripts.segments_gc_corr} -i ${manifest.sample_id}.corrected.bed -s ${manifest.sample_id}
-
-        #Rscript ${params.scripts.segments} -i ${bedfile} -s ${manifest.sample_id}
-
-        #Rscript ${params.scripts.overlaps} -s ${manifest.sample_id} -l ${params.references.locus_file}
-         
-
-
+        Rscript ${params.scripts.segments} -i ${bedfile} -s ${manifest.sample_id}
     """
 
 }

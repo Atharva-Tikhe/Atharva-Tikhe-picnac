@@ -13,11 +13,12 @@ include { IAAP  } from './modules/iaap'
 include { ILLUMINA_EXTRACT_DATA } from './modules/illumina_extract_data'
 include { MAKE_BED } from './modules/make_bed'
 include { LIFT_OVER } from './modules/lift_over'
+include { GC_CORRECTION } from './modules/gc_correction'
+include { WAVE_CORRECTION } from './modules/wave_correction'
 include { CBS } from './modules/cbs'
-
+include { PLOT_PANEL } from './modules/plot_panel.nf'
 
 include { READ_SAMPLESHEET } from './subworkflows/read_samplesheet.nf'
-
 
 workflow {
   
@@ -33,6 +34,9 @@ workflow {
 
     LIFT_OVER(MAKE_BED.output.bed)
 
-    CBS(LIFT_OVER.output.lifted_bed)
+    WAVE_CORRECTION(LIFT_OVER.output.lifted_bed)
+
+    PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed)
+
 
 }

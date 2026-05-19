@@ -38,7 +38,7 @@ for (ch in chroms) {
   fit <- loess(
                V9 ~ V3,
                data = d,
-               span = 0.1,
+               span = 0.2,
                family = "symmetric",
                degree = 1, 
                surface = "direct"
