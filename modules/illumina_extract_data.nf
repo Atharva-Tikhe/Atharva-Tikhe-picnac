@@ -1,6 +1,6 @@
 process ILLUMINA_EXTRACT_DATA {
 
-  publishDir "${params.outdir}/${manifest.sample_id}/extracted_data/", pattern: "*.csv"
+  publishDir "${params.outdir}/${manifest.sample_id}/extracted_data/", pattern: "*.tsv"
 
   label 'process_high'
 

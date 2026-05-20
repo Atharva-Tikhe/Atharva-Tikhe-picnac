@@ -16,7 +16,8 @@ include { LIFT_OVER } from './modules/lift_over'
 include { GC_CORRECTION } from './modules/gc_correction'
 include { WAVE_CORRECTION } from './modules/wave_correction'
 include { CBS } from './modules/cbs'
-include { PLOT_PANEL } from './modules/plot_panel.nf'
+include { PLOT_PANEL } from './modules/plot_panel'
+include { ASCAT } from './modules/ascat'
 
 include { READ_SAMPLESHEET } from './subworkflows/read_samplesheet.nf'
 
@@ -38,5 +39,6 @@ workflow {
 
     PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed)
 
+    ASCAT(manifest, WAVE_CORRECTION.output.lrr_bed)
 
 }
