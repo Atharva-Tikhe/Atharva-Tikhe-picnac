@@ -39,6 +39,7 @@ workflow {
 
     PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed)
 
-    ASCAT(manifest, WAVE_CORRECTION.output.lrr_bed)
+    // ASCAT(manifest, WAVE_CORRECTION.output.lrr_bed)
+    ASCAT(LIFT_OVER.output.lifted_bed)
 
 }

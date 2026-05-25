@@ -70,9 +70,9 @@ class BEDWriter:
             if len(self.df) == len(self.df_bed):
                 logging.info("rearranged columns for BED")
                 logging.info("added start column")
-        else:
-            logging.error("dataframe shapes do not match after dropping XY!")
-            exit(1)
+            else:
+                logging.error("dataframe shapes do not match after dropping XY!")
+                exit(1)
 
         self.df_bed["chrom"] = self.df_bed["chrom"].apply(
             lambda x: x if x.startswith("chr") else f"chr{x}"

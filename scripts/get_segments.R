@@ -26,7 +26,7 @@ CNA.object <- CNA(data$V9, data$V1, data$V3, data.type = 'logratio', sampleid=sa
 
 smoothed.CNA.object <- smooth.CNA(CNA.object)
 
-segment.smoothed.CNA.object <- segment(smoothed.CNA.object, undo.splits = "sdundo", undo.SD=3)
+segment.smoothed.CNA.object <- segment(smoothed.CNA.object, undo.splits = "sdundo", undo.SD=2)
 
 write.table(segment.smoothed.CNA.object$output, paste0(sample_id, '_segments.tsv'), sep='\t')
 

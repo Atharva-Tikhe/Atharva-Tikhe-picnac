@@ -13,7 +13,7 @@ process LIFT_OVER {
 
         def do_liftover = manifest.batch_meta.Build == "37"
         def liftover_cmd = do_liftover ? """
-        ${params.tools.liftover} "${manifest.sample_id}.bed" "${params.references.chain_file}" "${manifest.sample_id}.hg38.bed"  "${manifest.sample_id}.hg38.unmapped.bed" -bedPlus=3 -tab > "liftover_${manifest.sample_id}.log"  2>&1 
+        ${params.tools.liftover} "${geno_tsv}" "${params.references.chain_file}" "${manifest.sample_id}.hg38.bed"  "${manifest.sample_id}.hg38.unmapped.bed" -bedPlus=3 -tab > "liftover_${manifest.sample_id}.log"  2>&1 
     """ : "${do_liftover}"
 
     """
