@@ -21,6 +21,8 @@ ascat.output <- ascat.runAscat(ascat.bc.seg)
 
 segments <- ascat.output$segments
 
+write.table(segments, 'segments.tsv', quote = FALSE, row.names = FALSE)
+
 panel <- read.table('/home/atharva/opt/panel_genes.bed', sep = '\t', stringsAsFactors = FALSE, header = 1)
 
 seg_gr <- GRanges(seqnames = paste0("chr", segments$chr), 

@@ -18,6 +18,8 @@ include { WAVE_CORRECTION } from './modules/wave_correction'
 include { CBS } from './modules/cbs'
 include { PLOT_PANEL } from './modules/plot_panel'
 include { ASCAT } from './modules/ascat'
+include { MAKE_PGV } from './modules/make_pgv.nf'
+include { AGGREGATE_REPORT } from './modules/aggregate_report.nf'
 
 include { READ_SAMPLESHEET } from './subworkflows/read_samplesheet.nf'
 
@@ -41,5 +43,9 @@ workflow {
 
     // ASCAT(manifest, WAVE_CORRECTION.output.lrr_bed)
     ASCAT(LIFT_OVER.output.lifted_bed)
+
+    MAKE_PGV(WAVE_CORRECTION.out.lrr_bed, WAVE_CORRECTION.out.cbs, PLOT_PANEL.out.gene_scores)
+
+    AGGREGATE_REPORT(PLOT_PANEL.out.gene_scores, PLOT_PANEL.out.plots, ASCAT.out.calls)
 
 }

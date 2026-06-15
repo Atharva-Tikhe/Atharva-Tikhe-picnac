@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCAT Results Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 py-10">
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-extrabold text-center mb-8 text-gray-800">Gene Analysis Report</h1>
+        
+        {% if sample or classification %}
+        <!-- Sample Information Table -->
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 mb-12 border border-blue-100">
+            <h2 class="text-xl font-bold mb-4 text-blue-800 border-b pb-2">Sample Information</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {% if sample %}
+                <div><span class="text-gray-500 text-xs uppercase font-semibold">Batch</span><p class="font-medium">{{ sample.batch }}</p></div>
+                <div><span class="text-gray-500 text-xs uppercase font-semibold">Row ID</span><p class="font-medium">{{ sample.row_id }}</p></div>
+                <div><span class="text-gray-500 text-xs uppercase font-semibold">Sample ID</span><p class="font-medium">{{ sample.sample_id }}</p></div>
+                <div><span class="text-gray-500 text-xs uppercase font-semibold">Platform</span><p class="font-medium">{{ sample.platform }}</p></div>
+                <div><span class="text-gray-500 text-xs uppercase font-semibold">Array</span><p class="font-medium">{{ sample.array }}</p></div>
+                <div class="col-span-1"><span class="text-gray-500 text-xs uppercase font-semibold">Folder</span><p class="font-medium truncate text-sm" title="{{ sample.folder }}">{{ sample.folder }}</p></div>
+                <div><span class="text-gray-500 text-xs uppercase font-semibold">Genome Version</span><p class="font-medium">hg38</p></div>
+                {% endif %}
+                
+                {% if classification %}
+                <div class="col-span-2 md:col-span-3 mt-2 pt-2 border-t border-gray-100">
+                    <span class="text-gray-500 text-xs uppercase font-semibold">UKALL-CNA Classification</span>
+                    <p class="text-lg font-bold {% if 'Good' in classification %}text-green-700{% elif 'Poor' in classification or 'High' in classification %}text-red-700{% else %}text-blue-700{% endif %}">
+                        {{ classification }}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% for gene in genes %}
+        <div class="bg-white rounded-xl shadow-md p-8 mb-16 flex flex-col items-center">
+            <h2 class="text-3xl font-bold mb-6 text-gray-700">{{ gene.gene_ascat }}</h2>
+            
+            <div class="w-full overflow-x-auto flex justify-center mb-8">
+                <table class="min-w-max border-collapse border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Chr</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Start</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">End</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">nMajor</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">nMinor</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">TCN</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">LOH <span class="text-xs text-gray-400">(ASCAT)</span></th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Status <span class="text-xs text-gray-400">(CUSTOM)</span> </th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Call  <span class="text-xs text-gray-400">(ASCAT)</span> </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600 text-sm font-light">
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.chr }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.start }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.end }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.nMajor }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.nMinor }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.TCN }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">
+                                <span>{{ gene.LOH }}</span>
+                            </td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200 font-bold uppercase
+                                {% if gene.status == 'DELETION' %}text-red-600
+                                {% else %}text-green-600
+                                {% endif %}">
+                                {{ gene.status }}
+                            </td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200 font-bold uppercase
+                                {% if gene.call == 'DELETION' %}text-red-600
+                                {% else %}text-green-600
+                                {% endif %}">
+                                {{ gene.call }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="w-full max-w-4xl">
+                <img src="{{ plot_dir }}/{{ gene.gene_ascat }}_plot.png" alt="{{ gene.gene_ascat }} Plot" class="w-full h-auto rounded-lg shadow-inner border border-gray-100">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -174,7 +174,7 @@ for(i in seq_len(nrow(gene_df))) {
    
   
   out_file <- file.path(
-    paste0(gene_name, "_plot.pdf")
+    paste0(gene_name, "_plot.png")
   )
   
   ggsave(
