@@ -1,6 +1,6 @@
 process ASCAT {
 
-    publishDir "${params.outdir}/${manifest.sample_id}/ascat" 
+    publishDir "${params.outdir}/ascat" 
 
     conda "/home/atharva/miniforge3/envs/ascat/"
 

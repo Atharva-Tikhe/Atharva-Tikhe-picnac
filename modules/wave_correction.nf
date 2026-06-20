@@ -1,6 +1,6 @@
 process WAVE_CORRECTION {
 
-    publishDir "${params.outdir}/${manifest.sample_id}/wave_correction_cbs/" 
+    publishDir "${params.outdir}/wave_correction_cbs/" 
 
     conda "/home/atharva/miniforge3/envs/dnacopy/"
 

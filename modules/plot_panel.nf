@@ -1,6 +1,6 @@
 process PLOT_PANEL {
 
-    publishDir "${params.outdir}/${manifest.sample_id}/panel_plots/" 
+    publishDir "${params.outdir}/panel_plots/" , mode: 'copy'
 
     conda "/home/atharva/miniforge3/envs/dnacopy/"
 

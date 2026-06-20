@@ -27,7 +27,7 @@ workflow {
   
   main:
   
-    manifest_ch = READ_SAMPLESHEET(channel.fromPath('/home/atharva/dev/pipeline/Atharva-Tikhe-picnac/samplesheet_w_batch.csv'))
+    manifest_ch = READ_SAMPLESHEET(channel.fromPath(params.input))
 
     manifest = manifest_ch.samples
 

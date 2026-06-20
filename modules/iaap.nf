@@ -1,6 +1,6 @@
 process IAAP {
   
-  publishDir "${params.outdir}/${manifest.sample_id}/genotype_files", pattern: '*.gtc'
+  publishDir "${params.outdir}/genotype_files", pattern: '*.gtc'
 
   label 'process_high'
 

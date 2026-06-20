@@ -1,6 +1,6 @@
 process AGGREGATE_REPORT {
 
-    publishDir "${params.outdir}/${manifest.sample_id}/report"
+    publishDir "${params.outdir}/report"
     
 
     input:
