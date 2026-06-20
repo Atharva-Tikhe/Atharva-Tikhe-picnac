@@ -27,7 +27,9 @@ workflow {
   
   main:
   
-    manifest = READ_SAMPLESHEET('/home/atharva/dev/pipeline/Atharva-Tikhe-picnac/samplesheet.csv').result
+    manifest_ch = READ_SAMPLESHEET(channel.fromPath('/home/atharva/dev/pipeline/Atharva-Tikhe-picnac/samplesheet_w_batch.csv'))
+
+    manifest = manifest_ch.samples
 
     IAAP(manifest)
 
@@ -39,13 +41,12 @@ workflow {
 
     WAVE_CORRECTION(LIFT_OVER.output.lifted_bed)
 
-    PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed)
-
-    // ASCAT(manifest, WAVE_CORRECTION.output.lrr_bed)
     ASCAT(LIFT_OVER.output.lifted_bed)
 
-    MAKE_PGV(WAVE_CORRECTION.out.lrr_bed, WAVE_CORRECTION.out.cbs, PLOT_PANEL.out.gene_scores)
-
+    PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed, ASCAT.out.calls)
+    
+    // MAKE_PGV(WAVE_CORRECTION.out.lrr_bed, WAVE_CORRECTION.out.cbs, PLOT_PANEL.out.gene_scores)
+    
     AGGREGATE_REPORT(PLOT_PANEL.out.gene_scores, PLOT_PANEL.out.plots, ASCAT.out.calls)
-
+    
 }

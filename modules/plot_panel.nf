@@ -6,7 +6,8 @@ process PLOT_PANEL {
 
     input:
     tuple val(manifest), path(segments)
-    path(lrr_bed)
+    tuple val(manifest2),path(lrr_bed)
+    tuple val(manifest3),path(ascat_calls)
 
     output:
     tuple val(manifest), path("*.tsv"), emit: gene_scores
@@ -16,7 +17,9 @@ process PLOT_PANEL {
     """
         Rscript ${params.scripts.gene_scores} -s $segments -p ${params.references.gene_panel}
 
-        Rscript ${params.scripts.plot_panel} -l $lrr_bed -s $segments -p ${params.references.gene_panel}
+        # Rscript ${params.scripts.plot_panel} -l $lrr_bed -s $segments -p ${params.references.gene_panel}
+
+        Rscript ${params.scripts.plot_panel} -l $lrr_bed -s ${manifest.sample_id}.hg38.calls.tsv -a ${manifest.sample_id}_gene_level_ascat_calls.tsv -g ${params.references.genes} -p ${params.references.panel_ranges}
 
 
     """

@@ -14,11 +14,32 @@ class GetCombinedCalls:
     def resolve_par1_custom(self):
         genes = ["SHOX", "CRLF2", "IL3RA", "ASMTL", "P2RY8"]
         par1_genes = self.df[self.df["gene_custom"].isin(genes)]
-        shox = par1_genes[par1_genes["gene_custom"] == "SHOX"]["status"].values[0]
-        crlf2 = par1_genes[par1_genes["gene_custom"] == "CRLF2"]["status"].values[0]
-        il3ra = par1_genes[par1_genes["gene_custom"] == "IL3RA"]["status"].values[0]
-        asmtl = par1_genes[par1_genes["gene_custom"] == "ASMTL"]["status"].values[0]
-        p2ry8 = par1_genes[par1_genes["gene_custom"] == "P2RY8"]["status"].values[0]
+        print(par1_genes)
+        shox = (
+            ""
+            if par1_genes[par1_genes["gene_custom"] == "SHOX"]["status"].empty
+            else par1_genes[par1_genes["gene_custom"] == "SHOX"]["status"].values[0]
+        )
+        crlf2 = (
+            ""
+            if par1_genes[par1_genes["gene_custom"] == "CRLF2"]["status"].empty
+            else par1_genes[par1_genes["gene_custom"] == "CRLF2"]["status"].values[0]
+        )
+        il3ra = (
+            ""
+            if par1_genes[par1_genes["gene_custom"] == "IL3RA"]["status"].empty
+            else par1_genes[par1_genes["gene_custom"] == "IL3RA"]["status"].values[0]
+        )
+        asmtl = (
+            ""
+            if par1_genes[par1_genes["gene_custom"] == "ASMTL"]["status"].empty
+            else par1_genes[par1_genes["gene_custom"] == "ASMTL"]["status"].values[0]
+        )
+        p2ry8 = (
+            ""
+            if par1_genes[par1_genes["gene_custom"] == "P2RY8"]["status"].empty
+            else par1_genes[par1_genes["gene_custom"] == "P2RY8"]["status"].values[0]
+        )
 
         if shox != "DELETION" and crlf2 != "DELETION":
             if il3ra == "DELETION" and asmtl == "DELETION" and p2ry8 == "DELETION":
@@ -31,11 +52,31 @@ class GetCombinedCalls:
     def resolve_par1_ascat(self):
         genes = ["SHOX", "CRLF2", "IL3RA", "ASMTL", "P2RY8"]
         par1_genes = self.df[self.df["gene_ascat"].isin(genes)]
-        shox = par1_genes[par1_genes["gene_ascat"] == "SHOX"]["call"].values[0]
-        crlf2 = par1_genes[par1_genes["gene_ascat"] == "CRLF2"]["call"].values[0]
-        il3ra = par1_genes[par1_genes["gene_ascat"] == "IL3RA"]["call"].values[0]
-        asmtl = par1_genes[par1_genes["gene_ascat"] == "ASMTL"]["call"].values[0]
-        p2ry8 = par1_genes[par1_genes["gene_ascat"] == "P2RY8"]["call"].values[0]
+        shox = (
+            ""
+            if par1_genes[par1_genes["gene_ascat"] == "SHOX"]["call"].empty
+            else par1_genes[par1_genes["gene_ascat"] == "SHOX"]["call"].values[0]
+        )
+        crlf2 = (
+            ""
+            if par1_genes[par1_genes["gene_ascat"] == "CRLF2"]["call"].empty
+            else par1_genes[par1_genes["gene_ascat"] == "CRLF2"]["call"].values[0]
+        )
+        il3ra = (
+            ""
+            if par1_genes[par1_genes["gene_ascat"] == "IL3RA"]["call"].empty
+            else par1_genes[par1_genes["gene_ascat"] == "IL3RA"]["call"].values[0]
+        )
+        asmtl = (
+            ""
+            if par1_genes[par1_genes["gene_ascat"] == "ASMTL"]["call"].empty
+            else par1_genes[par1_genes["gene_ascat"] == "ASMTL"]["call"].values[0]
+        )
+        p2ry8 = (
+            ""
+            if par1_genes[par1_genes["gene_ascat"] == "P2RY8"]["call"].empty
+            else par1_genes[par1_genes["gene_ascat"] == "P2RY8"]["call"].values[0]
+        )
 
         if shox != "DELETION" and crlf2 != "DELETION":
             if il3ra == "DELETION" and asmtl == "DELETION" and p2ry8 == "DELETION":
@@ -54,13 +95,15 @@ class GetCombinedCalls:
         for gene in genes:
             ascat_calls.append(
                 "Yes"
-                if self.df[self.df["gene_ascat"] == gene]["call"].values[0]
+                if self.df[self.df["gene_ascat"] == gene]["call"].empty == False
+                and self.df[self.df["gene_ascat"] == gene]["call"].values[0]
                 == "DELETION"
                 else "No"
             )
             custom_calls.append(
                 "Yes"
-                if self.df[self.df["gene_custom"] == gene]["status"].values[0]
+                if self.df[self.df["gene_custom"] == gene]["call"].empty == False
+                and self.df[self.df["gene_custom"] == gene]["status"].values[0]
                 == "DELETION"
                 else "No"
             )

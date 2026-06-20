@@ -4,7 +4,7 @@ process MAKE_BED {
        tuple val(manifest), path(geno_tsv)
 
     output:
-        tuple val(manifest), path("${manifest.sample_id}.merged_XY.bed"), emit: bed
+        tuple val(manifest),path("${manifest.sample_id}.merged_XY.bed"), emit: bed
     
     script:
     """

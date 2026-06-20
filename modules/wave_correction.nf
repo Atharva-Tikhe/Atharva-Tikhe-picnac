@@ -10,7 +10,7 @@ process WAVE_CORRECTION {
     output:
     tuple val(manifest), path("*calls.tsv"), emit: cbs
     tuple val(manifest), path("*.png"), emit: cbs_images
-    path("output.bed"), emit: lrr_bed
+    tuple val(manifest), path("output.bed"), emit: lrr_bed
 
     script:
     """

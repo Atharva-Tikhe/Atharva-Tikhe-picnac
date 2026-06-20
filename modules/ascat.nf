@@ -10,9 +10,9 @@ process ASCAT {
     // path(bedfile)
 
     output:
-    tuple val(manifest), path("*.txt"), emit: values
-    tuple val(manifest), path("*.png"), emit: plots
-    tuple val(manifest), path("*.tsv"), emit: calls
+    tuple val(manifest),path("*.txt"), emit: values
+    tuple val(manifest),path("*.png"), emit: plots
+    tuple val(manifest),path("*.tsv"), emit: calls
 
 
     script:
