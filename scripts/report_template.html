@@ -37,7 +37,7 @@
         </div>
         {% endif %}
 
-        {% for gene in genes %}
+        {% for gene in genes if gene.chr != 'chrX' %}
         <div class="bg-white rounded-xl shadow-md p-8 mb-16 flex flex-col items-center">
             <h2 class="text-3xl font-bold mb-6 text-gray-700">{{ gene.gene_ascat }}</h2>
             
@@ -85,10 +85,69 @@
             </div>
             
             <div class="w-full max-w-4xl">
-                <img src="{{ plot_dir }}/{{ gene.gene_ascat }}_plot.png" alt="{{ gene.gene_ascat }} Plot" class="w-full h-auto rounded-lg shadow-inner border border-gray-100">
+                <img src="{{ plot_dir }}/{{ gene.gene_ascat }}.png" alt="{{ gene.gene_ascat }} Plot" class="w-full h-auto rounded-lg shadow-inner border border-gray-100">
             </div>
         </div>
         {% endfor %}
+
+        <!-- PAR1 Section for chrX genes -->
+        {% set chrx_genes = genes | selectattr('chr', 'equalto', 'chrX') | list %}
+        {% if chrx_genes %}
+        <div class="bg-white rounded-xl shadow-md p-8 mb-16 flex flex-col items-center">
+            <h2 class="text-3xl font-bold mb-6 text-gray-700">PAR1 (chrX)</h2>
+            
+            <div class="w-full overflow-x-auto flex justify-center mb-8">
+                <table class="min-w-max border-collapse border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Gene</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Chr</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Start</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">End</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">nMajor</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">nMinor</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">TCN</th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">LOH <span class="text-xs text-gray-400">(ASCAT)</span></th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Status <span class="text-xs text-gray-400">(CUSTOM)</span> </th>
+                            <th class="py-3 px-6 text-center border-b border-gray-200">Call  <span class="text-xs text-gray-400">(ASCAT)</span> </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600 text-sm font-light">
+                        {% for gene in chrx_genes %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="py-3 px-6 text-center border-b border-gray-200 font-bold text-gray-700">{{ gene.gene_ascat }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.chr }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.start }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.end }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.nMajor }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.nMinor }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">{{ gene.TCN }}</td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200">
+                                <span>{{ gene.LOH }}</span>
+                            </td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200 font-bold uppercase
+                                {% if gene.status == 'DELETION' %}text-red-600
+                                {% else %}text-green-600
+                                {% endif %}">
+                                {{ gene.status }}
+                            </td>
+                            <td class="py-3 px-6 text-center border-b border-gray-200 font-bold uppercase
+                                {% if gene.call == 'DELETION' %}text-red-600
+                                {% else %}text-green-600
+                                {% endif %}">
+                                {{ gene.call }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="w-full max-w-4xl">
+                <img src="{{ plot_dir }}/PAR1.png" alt="PAR1 Plot" class="w-full h-auto rounded-lg shadow-inner border border-gray-100">
+            </div>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

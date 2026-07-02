@@ -1,6 +1,7 @@
 process WAVE_CORRECTION {
 
     publishDir "${params.outdir}/wave_correction_cbs/" 
+    publishDir "${params.outdir}/stats/", pattern: "*.WF"
 
     conda "/home/atharva/miniforge3/envs/dnacopy/"
 
@@ -11,6 +12,7 @@ process WAVE_CORRECTION {
     tuple val(manifest), path("*calls.tsv"), emit: cbs
     tuple val(manifest), path("*.png"), emit: cbs_images
     tuple val(manifest), path("output.bed"), emit: lrr_bed
+    tuple val(manifest), path("*.WF"), emit: stats
 
     script:
     """

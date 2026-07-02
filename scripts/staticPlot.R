@@ -21,11 +21,13 @@ ascat_calls_file <- opt$ascat
 panel_file <- opt$panel
 genes_file <- opt$genes
 
-# lrr_file <- "206617090143_32466/wave_correction_cbs/output.bed"
-# seg_file <- "./206617090143_32466/wave_correction_cbs/206617090143_32466.hg38.calls.tsv"
-# ascat_calls_file <- "./206617090143_32466/ascat/206617090143_32466_gene_level_ascat_calls.tsv"
-# panel_file <- "./panel.ranges.tsv"
-# genes_file <- "./jbrowse/gencode.genes.tsv"
+#lrr_file <- "./output.bed"
+#seg_file <- "./205030250061_32215.hg38.calls.tsv"
+#ascat_calls_file <- "./205030250061_32215_gene_level_ascat_calls.tsv"
+
+#panel_file <- "~/NCL/dissertation/PAR1_Viz/panel.ranges.tsv"
+#genes_file <- "~/NCL/dissertation/PAR1_Viz/jbrowse/gencode.genes.tsv"
+
 
 lrr <- read.table(lrr_file, sep = '\t', header = 1)
 lrr$Chr <- paste0('chr', lrr$Chr)
@@ -175,29 +177,7 @@ plotPAR1 <- function(lrr, seg, ascat, panel, genes) {
 
 
 plotGenes <- function(lrr, seg, ascat, panel, genes) {
-  lrr$chr <- paste0('chr', lrr$Chr)
-  lrr$Start <- lrr$Position - 1
   
-  gr_lrr <- GRanges(seqnames = lrr$chr, 
-                    ranges = IRanges(lrr$Start, lrr$Position), 
-                    lrr = lrr$Log.R.Ratio)
-
-  
-  flat_segments <- seg %>%
-    rowwise() %>%
-    do(data.frame(
-      chrom = .$chrom,
-      pos = c(.$loc.start, .$loc.end),      # Both boundaries get the same value
-      seg.mean = c(.$seg.mean, .$seg.mean),
-      call = c(.$call, .$call)
-    ))
-  
-  gr_seg <- GRanges(
-    seqnames = flat_segments$chrom,
-    ranges = IRanges(start = flat_segments$pos, end = flat_segments$pos),
-    score = flat_segments$seg.mean
-  )
-
   gr_genes <- GRanges(
     seqnames = genes$Chromosome,
     ranges = IRanges(start = genes$Start, end = genes$End),
@@ -229,27 +209,57 @@ plotGenes <- function(lrr, seg, ascat, panel, genes) {
     
     png(filename = output_filename, width = 1200, height = 800, res = 150)
     
+    # ------ LRR -----
+    
+    lrr$chr <- paste0('chr', lrr$Chr)
+    
+    current_lrr <- lrr %>% filter(Chr == current_chrom)
+    current_lrr$Start <- current_lrr$Position - 1
+    
+    gr_lrr <- GRanges(seqnames = current_lrr$Chr, 
+                      ranges = IRanges(current_lrr$Start, current_lrr$Position), 
+                      lrr = current_lrr$Log.R.Ratio)
+    
     current_lrr_track <- DataTrack(
       range = gr_lrr,
       chromosome = current_chrom,
       genome = genome,
       name = paste0(current_gene, '_custom_cbs'),
-      type = 'p'
+      type = 'p',
+      col = 'darkgray'
     )
     
+    flat_segments <- seg %>%
+      rowwise() %>%
+      do(data.frame(
+        chrom = .$chrom,
+        pos = c(.$loc.start, .$loc.end),      # Both boundaries get the same value
+        seg.mean = c(.$seg.mean, .$seg.mean),
+        call = c(.$call, .$call)
+      ))
+    
+    current_flat_segments <- flat_segments %>% filter(chrom == current_chrom)
+    
+    gr_seg <- GRanges(
+      seqnames = flat_segments$chrom,
+      ranges = IRanges(start = flat_segments$pos, end = flat_segments$pos),
+      score = flat_segments$seg.mean
+    )
     
     current_seg_track <- DataTrack(
       range = gr_seg,
-      data = mcols(gr_seg)$score,
+      #data = mcols(gr_seg)$score,
       chromosome = current_chrom,
-      start = current_start,
-      end = current_end,
+      #start = current_start,
+      #end = current_end,
       name = "Seg Mean",
       type = c("l"), # "l" for lines, "g" for background grid
       col = "firebrick",  # Line colour
       lwd = 4,            # Thick lines for high visibility
       ylim = c(-0.6, 0.2) # Set y-axis bounds to clearly see the drop
     ) 
+    
+    print(summary(current_seg_track))
     
     current_overlay <- OverlayTrack(list(current_lrr_track, current_seg_track) , name = paste0(current_gene, "_custom_cbs"))
     

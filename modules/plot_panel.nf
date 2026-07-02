@@ -1,6 +1,7 @@
 process PLOT_PANEL {
 
     publishDir "${params.outdir}/panel_plots/" , mode: 'copy'
+    publishDir "${params.outdir}/report/", mode: 'copy', pattern: '*.png'
 
     conda "/home/atharva/miniforge3/envs/dnacopy/"
 
@@ -16,8 +17,6 @@ process PLOT_PANEL {
     script:
     """
         Rscript ${params.scripts.gene_scores} -s $segments -p ${params.references.gene_panel}
-
-        # Rscript ${params.scripts.plot_panel} -l $lrr_bed -s $segments -p ${params.references.gene_panel}
 
         Rscript ${params.scripts.plot_panel} -l $lrr_bed -s ${manifest.sample_id}.hg38.calls.tsv -a ${manifest.sample_id}_gene_level_ascat_calls.tsv -g ${params.references.genes} -p ${params.references.panel_ranges}
 

@@ -20,13 +20,11 @@ def run_pipeline(pipeline_id, sample_id, sample_path, work_dir):
 
     cwd = os.getcwd()
 
-    print(f"submitting {sample_id}")
-
     os.chdir(sample_path)
 
     sample_path = Path(sample_path)
 
-    command = f"/usr/bin/bash nextflow /home/atharva/dev/pipeline/Atharva-Tikhe-picnac/main.nf --outdir {sample_path} -work-dir {work_dir}  --pipeline_id '{pipeline_id}' --input {sample_path / 'samplesheet.csv'} "
+    command = f"/usr/bin/bash nextflow /home/atharva/dev/pipeline/Atharva-Tikhe-picnac/main.nf -resume --outdir {sample_path} -work-dir {work_dir}  --pipeline_id '{pipeline_id}' --input {sample_path / 'samplesheet.csv'}"
 
     process = subprocess.Popen(
         command,
@@ -38,10 +36,14 @@ def run_pipeline(pipeline_id, sample_id, sample_path, work_dir):
 
     # queue_emit(pipeline_id, "running")
 
+    write_output = open(sample_path / "pipeline_stdout", "w")
+
     for line in process.stderr:  # type: ignore
         print(f"CELERY WORKER ERROR: {line}")
 
+    write_output.writelines(process.stdout)
     process.wait()
+    write_output.close()
     os.chdir(cwd)
 
     # queue_emit(pipeline_id, "completed", {"exit_code": process.returncode})

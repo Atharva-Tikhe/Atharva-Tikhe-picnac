@@ -12,6 +12,7 @@ process AGGREGATE_REPORT {
     path("report.html"), optional: true
     path("results.tsv"), optional: true
     path("*.png"), optional: true
+    path("classifier_result.txt"), optional: true
 
 
     script:
@@ -29,7 +30,7 @@ process AGGREGATE_REPORT {
         echo "${manifest.platform}" >> sample_info.txt
         echo "${manifest.array}" >> sample_info.txt
         
-        ${params.tools.python} ${params.scripts.gen_report} --results results.tsv --sample_info sample_info.txt --plot_dir ./ --classifier classifier_result.txt  --output ./report.html --template ${params.scripts.report_template}
+        ${params.tools.python} ${params.scripts.gen_report} --results results.tsv --sample_info sample_info.txt --plot_dir ${params.outdir}/report/ --classifier classifier_result.txt  --output ./report.html --template ${params.scripts.report_template}
 
         # cp *.png ~/dev/pipeline/executions/test_h_sense_ascat/${manifest.sample_id}/report/
         

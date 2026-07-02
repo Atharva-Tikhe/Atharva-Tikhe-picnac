@@ -13,7 +13,7 @@ process IAAP {
 
   script:
   """
-    ${params.tools.iaap} gencall -f ${manifest.folder}  ${params.references.manifest} ${params.references.cluster} . -g 
+    ${params.tools.iaap} gencall -f "${manifest.folder}"  /home/atharva/data/${manifest.batch_meta.Manifest_file} /home/atharva/data/${manifest.batch_meta.Cluster_file} . -g 
 
   """
 
