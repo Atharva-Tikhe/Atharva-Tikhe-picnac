@@ -92,15 +92,18 @@ gene_scores <- results[
 gene_scores[
   ,
   status := fifelse(
-    weighted_segmean < -0.25,
+    weighted_segmean < -0.2,
     "DELETION",
     fifelse(
-      weighted_segmean > 0.15,
+      weighted_segmean > 0.2,
       "GAIN",
       "DIPLOID"
     )
   )
 ]
+
+fwrite(results, "panel_gene_calls_raw.tsv", sep = "\t")
+
 
 fwrite(
   gene_scores,

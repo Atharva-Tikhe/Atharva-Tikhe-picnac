@@ -2,7 +2,7 @@ import pandas as pd
 
 batch_meta = pd.read_csv("./assets/batch_records.csv")
 
-paths = pd.read_csv("./b6_paths.csv", header=None)
+paths = pd.read_csv("./b8_paths.csv", header=None)
 
 paths.rename({0: "parent_folder"}, axis=1, inplace=True)
 sample_ids = []
@@ -16,8 +16,8 @@ paths = paths.iloc[:, [2, 1, 0]]
 
 paths["platform"] = "Illumina"
 paths["array"] = "CytoSNP 850K"
-paths["batch"] = 6
+paths["batch"] = 8
 
 
 result = paths.merge(batch_meta, on="batch")
-result.to_csv("samplesheet_b6.csv", index=False)
+result.to_csv("samplesheet_b8.csv", index=False)

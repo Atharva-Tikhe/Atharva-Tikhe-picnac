@@ -15,7 +15,7 @@ celery.conf.update(task_track_started=True, result_expires=3600)
 
 
 @celery.task
-def run_pipeline(pipeline_id, sample_id, sample_path, work_dir):
+def run_pipeline(pipeline_id, sample_id, sample_path, work_dir, threshold):
     # queue_emit(pipeline_id, "submitted")
 
     cwd = os.getcwd()
@@ -24,7 +24,7 @@ def run_pipeline(pipeline_id, sample_id, sample_path, work_dir):
 
     sample_path = Path(sample_path)
 
-    command = f"/usr/bin/bash nextflow /home/atharva/dev/pipeline/Atharva-Tikhe-picnac/main.nf -resume --outdir {sample_path} -work-dir {work_dir}  --pipeline_id '{pipeline_id}' --input {sample_path / 'samplesheet.csv'}"
+    command = f"/usr/bin/bash nextflow /home/atharva/dev/pipeline/Atharva-Tikhe-picnac/main.nf -resume --outdir {sample_path} -work-dir {work_dir}  --pipeline_id '{pipeline_id}' --input {sample_path / 'samplesheet.csv'} --threshold {threshold}"
 
     process = subprocess.Popen(
         command,

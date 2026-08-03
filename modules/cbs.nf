@@ -16,7 +16,7 @@ process CBS {
     """
         which R > version.txt
 
-        Rscript ${params.scripts.segments} -i ${bedfile} -s ${manifest.sample_id}
+        Rscript ${params.scripts.segments} -i ${bedfile} -s ${manifest.sample_id} -t ${params.threshold}
     """
 
 }

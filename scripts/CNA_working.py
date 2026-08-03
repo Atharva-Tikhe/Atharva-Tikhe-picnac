@@ -501,7 +501,13 @@ def run():
     )
     with open("./classifier_result.txt", "w") as f:
         f.writelines(cna_profile)
-        print("classifier_result.text written")
+        print("classifier_result.txt written")
+
+    calls_df = pd.DataFrame([calls])
+
+    calls_df.to_csv("gene_status.csv", index=False)
+
+    print("gene_status.csv written")
 
 
 run()

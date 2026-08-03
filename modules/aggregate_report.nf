@@ -1,6 +1,7 @@
 process AGGREGATE_REPORT {
 
     publishDir "${params.outdir}/report"
+    publishDir "${params.outdir}/stats", pattern: "gene_status.csv"
     
 
     input:
@@ -13,6 +14,7 @@ process AGGREGATE_REPORT {
     path("results.tsv"), optional: true
     path("*.png"), optional: true
     path("classifier_result.txt"), optional: true
+    path("gene_status.csv"), optional: true
 
 
     script:
