@@ -11,12 +11,15 @@ suppressPackageStartupMessages({
 
 option_list <- list(
                     make_option(c("-s", "--seg"), type = "character", help = "Segments file (bed/tsv)"),
-                    make_option(c("-p", "--panel"), type = "character", help = "Gene Panel")
+                    make_option(c("-p", "--panel"), type = "character", help = "Gene Panel"),
+                    make_option(c("-t", "--threshold"), type = "character", help = "Threshold value")
+
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
 seg_file <- opt$seg
 panel <- opt$panel
+threshold <- opt$threshold
 
 # gtf_file <- "gencode.v49.annotation.gtf.gz"
 
@@ -92,7 +95,7 @@ gene_scores <- results[
 gene_scores[
   ,
   status := fifelse(
-    weighted_segmean < -0.2,
+    weighted_segmean < threshold,
     "DELETION",
     fifelse(
       weighted_segmean > 0.2,
