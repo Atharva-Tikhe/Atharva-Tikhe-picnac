@@ -23,6 +23,9 @@ include { AGGREGATE_REPORT } from './modules/aggregate_report.nf'
 
 include { READ_SAMPLESHEET } from './subworkflows/read_samplesheet.nf'
 
+include { RUN_APT } from './modules/affy/run_apt.nf'
+include { EXTRACT_CN } from './modules/affy/extract_cn.nf'
+
 workflow {
   
   main:
@@ -31,23 +34,39 @@ workflow {
 
     manifest = manifest_ch.samples
 
-    IAAP(manifest)
+    def lines = file(params.input).readLines()
+    def header = lines[0].split(',').collect { it.trim() }
+    def firstRow = lines[1].split(',').collect { it.trim() }
+    def rowMap = [header, firstRow].transpose().collectEntries { k, v -> [(k): v] }
 
-    ILLUMINA_EXTRACT_DATA(IAAP.output.gtc)
+    def platform = rowMap.platform
 
-    MAKE_BED(ILLUMINA_EXTRACT_DATA.output.illumina_tsv)
+    println(platform)
+    println(platform.trim() == 'Affymetrix')
 
-    LIFT_OVER(MAKE_BED.output.bed)
+    if ( platform == "Affymetrix" ) {
+        RUN_APT(manifest)
+        EXTRACT_CN(RUN_APT.out.segments)
+    } else {
 
-    WAVE_CORRECTION(LIFT_OVER.output.lifted_bed)
+        IAAP(manifest)
 
-    ASCAT(LIFT_OVER.output.lifted_bed)
+        ILLUMINA_EXTRACT_DATA(IAAP.output.gtc)
 
-    PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed, ASCAT.out.calls)
-    
-    // MAKE_PGV(WAVE_CORRECTION.out.lrr_bed, WAVE_CORRECTION.out.cbs, PLOT_PANEL.out.gene_scores)
-    
-    AGGREGATE_REPORT(PLOT_PANEL.out.gene_scores, PLOT_PANEL.out.plots, ASCAT.out.calls)
+        MAKE_BED(ILLUMINA_EXTRACT_DATA.output.illumina_tsv)
+
+        LIFT_OVER(MAKE_BED.output.bed)
+
+        WAVE_CORRECTION(LIFT_OVER.output.lifted_bed)
+
+        ASCAT(LIFT_OVER.output.lifted_bed)
+
+        PLOT_PANEL(WAVE_CORRECTION.output.cbs, WAVE_CORRECTION.output.lrr_bed, ASCAT.out.calls)
+        
+        // MAKE_PGV(WAVE_CORRECTION.out.lrr_bed, WAVE_CORRECTION.out.cbs, PLOT_PANEL.out.gene_scores)
+        
+        AGGREGATE_REPORT(PLOT_PANEL.out.gene_scores, PLOT_PANEL.out.plots, ASCAT.out.calls)
+    }
 
     workflow.onComplete = {
         def statusText = workflow.success ? "SUCCESS" : "FAILED"
@@ -118,42 +137,6 @@ workflow {
         } catch (Exception e) {
             println "Error sending Adaptive Card to Teams: ${e.message}"
         }        
-        // def teamsWebHook = "https://default9c5012c9b61644c2a91766814fbe3e.87.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/21195a9a9cc14faabe68e5ea67b9661b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=4KQhtBV8kzzQaMCtuO-GDpJ5eAmZQ0RO2LrbnLzSWdE"
-        //
-        // // def status = "${ workflow.success ? 'OK' : 'failed' }"
-        // def message = """
-        //     ### Nextflow Pipeline Execution: ${workflow.runName} OK
-        //     * **Pipeline:** ${workflow.scriptName}
-        //     * **Run Name:** ${workflow.runName}
-        //     * **Completed at:** ${workflow.complete}
-        //     * **Duration:** ${workflow.duration}
-        //     * **Command Line:** `${workflow.commandLine}`
-        // """
-        //
-        // def jsonPayload = groovy.json.JsonOutput.toJson([
-        //     text: message
-        // ])
-        //
-        // try {
-        //     def url = new URL(teamsWebHook)
-        //     def connection = url.openConnection()
-        //     connection.setRequestMethod("POST")
-        //     connection.setRequestProperty("Content-Type", "application/json")
-        //     connection.setDoOutput(true)
-        //     
-        //     def os = connection.getOutputStream()
-        //     os.write(jsonPayload.getBytes("UTF-8"))
-        //     os.close()
-        //     
-        //     int responseCode = connection.getResponseCode()
-        //     if (responseCode == 200 || responseCode == 202) {
-        //         println "Teams notification sent successfully."
-        //     } else {
-        //         println "Failed to send Teams notification. Status: ${responseCode}"
-        //     }
-        // } catch (Exception e) {
-        //     println "Error sending Teams notification: ${e.message}"
-        // }
 
     }
     
